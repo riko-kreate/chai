@@ -155,7 +155,7 @@ settings(){const s=U.s;return`<div class="top">${back('me')}<b>Настройк�
 <button class="row" data-a="unblock"><span style="flex:1">Разблокировать всех ботов<br><span class="sub">Вернуть всех заблокированных ботов</span></span></button>
 <div class="row"><span style="flex:1">Боты пишут первыми<br><span class="sub">Если ты не писала сутки, бот напишет сам, не чаще раза в день, максимум 3 раза подряд. Тратит запросы нейросети.</span></span><button class="sw ${s.pings!==false?'on':''}" data-a="pings"></button></div>
 <div class="row"><span style="flex:1">Уведомления<br><span class="sub">Показывать уведомления о таких сообщениях. Работают, пока приложение открыто в браузере.</span></span><button class="sw ${s.notif==='yes'?'on':''}" data-a="notif"></button></div>
-<p class="lb">AI (нейросеть)</p><div style="display:flex;flex-direction:column;gap:10px;margin:10px 0"><input id="su" placeholder="Адрес API (URL)" value="${esc(s.url)}"><input id="sk" type="password" placeholder="Ключ API" value="${esc(s.key)}"><input id="sm" placeholder="Model (например модель без цензуры)" value="${esc(s.model)}"><input id="sl" type="number" min="1" placeholder="Лимит запросов в день (для бесплатного OpenRouter 50)" value="${esc(s.limit||'')}"><textarea id="sb" rows="3" placeholder="Резервные API, по одному в строке: url|ключ|модель. Включатся сами, если основной выдаст лимит">${esc(s.backup||'')}</textarea><textarea id="sp" rows="3" placeholder="Доп. инструкция для всех ботов (стиль, длина ответа…)">${esc(s.sys)}</textarea><button class="wb" data-a="saveai">Сохранить</button><button class="wb g" data-a="testai">Проверить связь</button></div>
+<p class="lb">AI (нейросеть)</p><div style="display:flex;flex-direction:column;gap:10px;margin:10px 0"><input id="su" placeholder="Адрес API (URL)" value="${esc(s.url)}"><input id="sk" type="password" placeholder="Ключ API" value="${esc(s.key)}"><input id="sm" placeholder="Model (например модель без цензуры)" value="${esc(s.model)}"><input id="sl" type="number" min="1" placeholder="Лимит запросов в день (для бесплатного OpenRouter 50)" value="${esc(s.limit||'')}"><button class="pill" data-a="resetuse">Сбросить счётчик за сегодня</button><textarea id="sb" rows="3" placeholder="Резервные API, по одному в строке: url|ключ|модель. Включатся сами, если основной выдаст лимит">${esc(s.backup||'')}</textarea><textarea id="sp" rows="3" placeholder="Доп. инструкция для всех ботов (стиль, длина ответа…)">${esc(s.sys)}</textarea><button class="wb" data-a="saveai">Сохранить</button><button class="wb g" data-a="testai">Проверить связь</button></div>
 <p class="lb">Аккаунт</p><button class="row" data-a="logout">Выйти</button><button class="row" data-a="delacc" style="color:var(--r)">Удалить аккаунт</button>
 <div class="row"><span>ID пользователя<br><span class="sub">${U.id}</span></span></div><p class="lb">О приложении</p><div class="row"><span>Версия приложения<br><span class="sub">1.0.0</span></span></div></div>`},
 memory(){const c=R.v?chatOf(R.v):null,b=c?bot(c.bot):null,t=R.t||(b?'bot':'you');
@@ -177,12 +177,13 @@ function pickImg(e){const f=e.target.files[0];if(!f)return;const r=new FileReade
 
 /* ---------- AI + память ---------- */
 const LIMITERR='Дневной лимит бесплатных запросов у этого ключа закончился (429). Добавь резервный API в Профиль → Настройки → AI или пополни OpenRouter на $10: тогда бесплатных запросов станет 1000 в день.';
-async function llm(m){usage().n++;save();const s=U.s,L=[{url:s.url,key:s.key,model:s.model}].concat((s.backup||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|').map(y=>y.trim());return{url:p[0],key:p[1],model:p[2]}}).filter(x=>x.url&&x.key&&x.model));
+async function llm(m){const s=U.s,L=[{url:s.url,key:s.key,model:s.model}].concat((s.backup||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|').map(y=>y.trim());return{url:p[0],key:p[1],model:p[2]}}).filter(x=>x.url&&x.key&&x.model));
 if(!L[0].url||!L[0].key||!L[0].model)throw new Error('Открой Профиль → Настройки → AI и укажи API URL, ключ и модель');
-let last;for(const c of L){let r;try{r=await F(c.url.replace(/\/$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+c.key},body:JSON.stringify({model:c.model,messages:m,temperature:.9})})}catch(e){last=e;continue}
-if(r.ok)return(await r.json()).choices[0].message.content.trim();
-const tx=(await r.text()).slice(0,160);last=new Error(r.status==429?LIMITERR:'Ошибка '+r.status+': '+tx);if(![402,408,429,500,502,503,504].includes(r.status))throw last}
-throw last}
+const errs=[];for(const c of L){const host=(c.url.match(/\/\/([^\/]+)/)||[])[1]||c.url;let r;
+try{r=await F(c.url.replace(/\/$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+c.key},body:JSON.stringify({model:c.model,messages:m,temperature:.9})})}catch(e){errs.push(host+': нет связи');continue}
+if(r.ok){let j;try{j=await r.json()}catch(e){}const out=j&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;if(!out){errs.push(host+': пустой ответ');continue}usage().n++;save();return out.trim()}
+const tx=(await r.text()).slice(0,140);errs.push(host+': '+(r.status==429?'лимит запросов (429)':'ошибка '+r.status+' '+tx))}
+throw new Error(errs.length==1&&errs[0].includes('(429)')?LIMITERR:errs.join(' | '))}
 const words=t=>t.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu)||[];
 function recall(c,qs){const Q=new Set(words(qs));return c.msgs.slice(0,-12).map((m,i)=>({m,i,s:words(m.t).filter(w=>Q.has(w)).length})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,8).sort((a,b)=>a.i-b.i).map(x=>(x.m.r=='u'?'User: ':'Character: ')+x.m.t.slice(0,350)).join('\n')}
 function build(b,c,ms=c.msgs){const last=ms[ms.length-1].t,pe=persona(c);
@@ -228,6 +229,7 @@ prev(){R=R.prev||{p:'home'};render()},
 async testai(){A.saveai(1);try{const r=await F(U.s.url.replace(/\/$/,'')+'/models',{headers:{Authorization:'Bearer '+U.s.key}});dlg(r.ok?'Связь с нейросетью есть ✔':'Сервер ответил: '+r.status+'. Проверь ключ и адрес.')}catch(e){dlg(e.message)}},
 gl(){social(new firebase.auth.GoogleAuthProvider())},fbk(){social(new firebase.auth.FacebookAuthProvider())},
 menu(){menu=!menu;render()},send,flt(v){flt=flt==v?'':v;render()},
+resetuse(){const u=usage();u.n=0;u.w=0;save();dlg('Счётчик сброшен')},
 async nsfw(){if(!U.s.nsfw&&!await dlg('Подтверди: мне есть 18 лет, я хочу видеть контент 18+ и ответы без смягчений.',0,'c'))return;U.s.nsfw=!U.s.nsfw;save();render()},
 rand(){const l=allBots();if(l.length)A.bot(l[Math.floor(Math.random()*l.length)].id)},
 pings(){U.s.pings=U.s.pings===false;save();render()},
