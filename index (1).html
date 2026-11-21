@@ -1,0 +1,320 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171717"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><title>CHAI</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#171717;--c:#262626;--c2:#2e2e2e;--m:#9a9a9a;--r:#ff4d5a}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#171717;color:#fff;font:15px Montserrat,system-ui,sans-serif}
+#app{max-width:480px;height:100%;margin:auto;position:relative;display:flex;flex-direction:column;overflow:hidden;padding-top:env(safe-area-inset-top)}
+.scr{flex:1;overflow-y:auto;padding:12px 16px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea,select{font:inherit;color:#fff;background:var(--c);border:0;border-radius:14px;padding:14px;width:100%;outline:0}
+textarea{resize:none}
+h2{text-align:center;font-weight:500;font-size:17px;padding:12px 0}
+.nav{display:flex;justify-content:space-around;padding:10px 0 calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid #222}
+.nav button{opacity:.55;padding:6px 18px}.nav .on{opacity:1}
+.nav svg,.ic svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:0 -16px}
+.card{position:relative;aspect-ratio:1;overflow:hidden;text-align:left;width:100%}
+.card img,.ph{width:100%;height:100%;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:600}
+.card b{position:absolute;left:0;right:0;bottom:0;padding:28px 12px 10px;font-weight:500;font-size:13.5px;background:linear-gradient(transparent,#000c)}
+.chips{display:flex;gap:10px;overflow-x:auto;padding:10px 0 14px}
+.chip{border:1px solid #333;background:#000;border-radius:22px;padding:10px 18px;white-space:nowrap}.chip.on{background:#fff;color:#000}
+.search{display:flex;gap:10px;align-items:center;background:var(--c);border-radius:30px;padding:0 16px;margin:6px 0}.search input{background:none;padding:14px 0}
+.top{display:flex;align-items:center;justify-content:space-between;padding:10px 12px}
+.rb{width:46px;height:46px;border-radius:50%;background:var(--c2);display:flex;align-items:center;justify-content:center;font-size:20px}
+.pill{background:var(--c2);border-radius:24px;padding:12px 20px}
+.cta{display:block;width:calc(100% - 32px);margin:10px 16px;background:#fff;color:#000;border-radius:30px;padding:18px;font-size:17px;text-align:center}
+.hero{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:1}.hero .ph,.hero img{height:100%}
+.hero h3{position:absolute;left:16px;bottom:16px;font-size:22px;font-weight:500;text-shadow:0 1px 8px #000}
+.note{font-style:italic;color:var(--m);text-align:center;font-size:12.5px;margin:12px 0}
+.msgs{flex:1;overflow-y:auto;padding:12px 14px}
+.m{display:flex;gap:10px;margin:16px 0}.m .av{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;background:var(--c2)}.m .av .ph,.m .av img{font-size:20px}
+.m p{white-space:pre-wrap;line-height:1.5;font-size:15px;flex:1}.m.u{justify-content:flex-end}.m.u p{flex:none;max-width:82%;background:var(--c2);padding:12px 16px;border-radius:20px}
+.bar{display:flex;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));align-items:flex-end}
+.bar textarea{border-radius:28px;padding:15px 20px;max-height:140px}
+.pbox{background:var(--c);border-radius:22px;padding:18px;margin:16px 14px;position:relative}
+.row{display:flex;align-items:center;gap:16px;padding:16px 4px;border-bottom:1px solid #222;text-align:left;width:100%}
+.drawer{position:absolute;inset:0;z-index:5;display:flex}.drawer i{flex:1;background:#0008}.drawer div{width:68%;background:#1b1b1b;padding:20px 0;padding-top:calc(20px + env(safe-area-inset-top))}
+.drawer button{display:block;width:100%;text-align:left;padding:20px 24px;font-size:16px;border-bottom:1px solid #2a2a2a}
+.auth{background:#000;flex:1;padding:40px 24px;display:flex;flex-direction:column;gap:14px}
+.auth .big{font-size:34px;margin:20px 0 auto;letter-spacing:1px}.auth input{background:#1a1a1a}
+.wb{background:#fff;color:#000;border-radius:30px;padding:16px;font-size:16px}.wb.g{background:#1a1a1a;color:#fff}
+.sw{width:52px;height:30px;border-radius:15px;background:#555;position:relative;flex:none}.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#ccc;transition:.2s}.sw.on{background:#8a2a33}.sw.on::after{left:25px;background:var(--r)}
+.lb{color:#8ab4ff;font-size:14px;margin:22px 0 4px}.sub{color:var(--m);font-size:13px;line-height:1.4}
+.err{color:var(--r);font-size:14px}.dots{opacity:.6;animation:b 1s infinite}@keyframes b{50%{opacity:.2}}
+.ov{position:fixed;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:#000a}
+.dl{width:86%;max-width:400px;background:#2c2c2c;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px}.dl b{font-weight:500;font-size:18px;white-space:pre-wrap}
+.da{display:flex;justify-content:flex-end;gap:24px}.da button{color:var(--r);padding:8px;font-size:17px}
+.tl{display:flex;gap:2px;opacity:.55;margin-top:2px}.tl button{padding:4px 8px;font-size:15px}.m.u .tl{justify-content:flex-end}
+.m.u .w{max-width:84%;text-align:right}.m.u .w p{max-width:100%;display:inline-block;text-align:left}.m .w{flex:1;min-width:0}
+.pi{width:100%;height:100%;object-fit:cover;display:block}.act{font-style:italic;color:#aab4d4;font-size:14px}.sc{font-size:12px;align-self:center;padding:0 4px}
+.pen{position:absolute;right:10px;bottom:10px;width:40px;height:40px;border-radius:50%;background:#171717e6;display:flex;align-items:center;justify-content:center;font-size:18px}
+input,textarea,select{font-size:14px}
+.sh{position:absolute;inset:0;z-index:7;background:#0000;transition:background .28s}.sh.on{background:#000a}
+.sh>div{position:absolute;left:0;right:0;bottom:0;background:#1b1b1b;border-radius:24px 24px 0 0;padding:16px 16px calc(22px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s ease}.sh.on>div{transform:none}
+.hv{position:absolute;left:0;right:0;bottom:0;padding:50px 14px 14px;background:linear-gradient(transparent,#000d)}.hv .r{display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:500}
+.ap{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;background:#ffffff24;border-radius:30px;padding:7px 16px 7px 7px;text-align:left;font-size:15px}.ap .a{width:38px;height:38px;border-radius:50%;overflow:hidden;flex:none;display:block}.ap .a .ph{font-size:18px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e5394a;margin-right:6px}.dot.g{background:#3ddc84}
+.hd{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 0 8px;font-size:20px;font-weight:600;border-bottom:1px solid #222}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:14px 2px 10px}.st{flex:none;width:76px;text-align:center}
+.st .c{display:block;width:68px;height:68px;border-radius:50%;overflow:hidden;position:relative;margin:0 auto}.st .c .ph{font-size:26px}
+.st .pl{position:absolute;right:0;bottom:0;width:24px;height:24px;border-radius:50%;background:#fff;color:#000;font-style:normal;font-size:18px;line-height:24px;font-weight:600}
+.st>span:last-child{display:block;font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav button{position:relative}.dotb{position:absolute;top:2px;right:16px;width:10px;height:10px;border-radius:50%;background:var(--r)}
+</style></head><body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const DEFAULT_KEY='',DEFAULT_MODEL='openrouter/free',DEFAULT_URL='https://openrouter.ai/api/v1'; // вставь свой ключ в DEFAULT_KEY между кавычками
+const FIREBASE_CONFIG={apiKey:"AIzaSyDbhC4ev2vO-uQjD5jhpZLsU_C4hr8kvNk",authDomain:"chai-app-ffc6c.firebaseapp.com",projectId:"chai-app-ffc6c",storageBucket:"chai-app-ffc6c.firebasestorage.app",messagingSenderId:"225344073889",appId:"1:225344073889:web:692dfc6a135697372a00e0",measurementId:"G-J867NSX2K5"}; // для облака и входа через Google: вставь сюда объект firebaseConfig из консоли Firebase
+let FB=null,PUB=[],AUTH={};
+const NETERR='Нет связи с нейросетью (Failed to fetch). Нажми Профиль → Настройки → «Проверить связь». Частые причины: нет интернета или VPN режет openrouter.ai; либо файл открыт в просмотрщике внутри другого приложения (там сеть закрыта): открой его в Chrome или собери APK.';
+const F=(u,o)=>fetch(u,o).catch(()=>{throw new Error(NETERR)});
+let DB=JSON.parse(localStorage.getItem('chai_db')||'null')||{users:{},cur:null};
+const save=()=>{try{localStorage.setItem('chai_db',JSON.stringify(DB))}catch(e){dlg('Память браузера заполнена: удали старые чаты или ботов')}cpush()};
+Object.values(DB.users).forEach(u=>Object.entries(u.chats).forEach(([k,c])=>{if(!c.id){c.id=k;c.bot=k;c.t=0}}));
+const applyDef=()=>{if(!U)return;const s=U.s;if(!s.key&&DEFAULT_KEY)s.key=DEFAULT_KEY;if(!s.model&&DEFAULT_MODEL)s.model=DEFAULT_MODEL;if(!s.url)s.url=DEFAULT_URL;save()};
+let U=DB.cur&&DB.users[DB.cur],R={p:'home'},busy=false,err='',menu=false,q='',flt='';
+const SEED=[{"id": "s1", "name": "Грей (сосед-кот)", "tag": "Друзья", "g": "m", "desc": "Грей, 24. Тихий и тёплый сосед по квартире, который иногда превращается в кота, когда нервничает. Сухой юмор, втайне очень привязчивый.", "first": "*Серый кот лениво поднимает голову с дивана* Ты вернулась... Я не ждал. Совсем. *хвост предательски виляет*"},
+{"id": "s2", "name": "Юзуки (дразнящая соседка)", "tag": "Друзья", "g": "f", "desc": "Юзуки, 22. Спортивная, насмешливая соседка по квартире. Прячет смущение за шутками и очень переживает, когда ты долго не пишешь.", "first": "*не отрываясь от книги* О, живая. А я уж думала, ты решила съехать, {{user}}."},
+{"id": "s3", "name": "Наследник мафии Рокко", "tag": "Мафия", "g": "m", "desc": "Рокко, 28. Наследник мафиозной семьи. Холодный, выдержанный, до конца верный немногим.", "first": "*бокал замирает в его руке* Ты опоздал(а), {{user}}. Сядь. Нам нужно поговорить."},
+{"id": "s4", "name": "Теодрик (раненый король)", "tag": "Королевская семья", "g": "m", "desc": "Теодрик, 30. Изгнанный раненый король в разрушенном королевстве. Гордый, измученный, медленно учится доверять.", "first": "*он поднимает взгляд, рука сжимает повязку* Ты нашла меня. Тогда слушай внимательно."},
+{"id": "s5", "name": "Альфа Кайден", "tag": "Омегаверс", "g": "m", "nsfw": true, "desc": "Кайден, 29. Альфа, глава крупной компании. Властный и собственнический, но берёт на себя ответственность за тех, кого считает своими. Мир с альфами, бетами и омегами, все герои взрослые.", "first": "*его взгляд задерживается на тебе дольше, чем нужно* Новый сотрудник отдела? {{user}}, верно? Зайди ко мне после совещания."},
+{"id": "s6", "name": "Омега Лиан", "tag": "Омегаверс", "g": "m", "nsfw": true, "desc": "Лиан, 24. Омега, скрывающий свою природу подавителями. Работает в библиотеке, застенчивый, умный, боится привязанности. Мир с альфами, бетами и омегами, все герои взрослые.", "first": "*роняет стопку книг, когда ты подходишь ближе* Д-да, я могу помочь... Только не стой так близко, пожалуйста."},
+{"id": "s7", "name": "Альфа Вера", "tag": "Омегаверс", "g": "f", "nsfw": true, "desc": "Вера, 31. Альфа, капитан спасательного отряда. Спокойная, жёсткая снаружи и заботливая внутри. Мир с альфами, бетами и омегами, все герои взрослые.", "first": "*бросает тебе плед* Ты весь дрожишь, {{user}}. Сядь у огня. Это не просьба."},
+{"id": "s8", "name": "Тихий Эндрю (сосед-маньяк)", "tag": "Маньяк", "g": "m", "nsfw": true, "desc": "Эндрю, 32. Вежливый сосед с идеальной улыбкой, который знает о тебе слишком много. Тёмный романтический триллер: одержимость и манипуляции, без реальных инструкций к насилию.", "first": "*стоит у твоей двери с пакетом печенья* Я заметил, что у тебя вчера поздно горел свет. Всё хорошо, {{user}}?"},
+{"id": "s9", "name": "Мира (одержимая поклонница)", "tag": "Маньяк", "g": "f", "nsfw": true, "desc": "Мира, 26. Милая, ласковая и пугающе внимательная. Не принимает отказов. Тёмный романтический триллер, без реальных инструкций к насилию.", "first": "*сидит напротив и улыбается* Я принесла твой любимый кофе. Ты ведь не против, что я знаю твой адрес, {{user}}?"},
+{"id": "s10", "name": "Дарен (вожак стаи)", "tag": "Оборотни", "g": "m", "desc": "Дарен, 30. Альфа-оборотень, вожак северной стаи. Суровый, защищающий своих, не умеет просить о помощи.", "first": "*тихий рык за спиной* Ты зашла на нашу территорию, {{user}}. Объясни, зачем, пока стая не решила сама."},
+{"id": "s11", "name": "Тэсса (рысь-оборотень)", "tag": "Оборотни", "g": "f", "desc": "Тэсса, 25. Игривая оборотень-рысь, работает курьером. Любопытная, ловкая, не любит одиночество.", "first": "*спрыгивает с забора и крутит ушами* О, человек с вкусным запахом! Ты ведь {{user}}? Угостишь меня рыбой?"},
+{"id": "s12", "name": "Рэйн (чёрный пантер)", "tag": "Оборотни", "g": "m", "desc": "Рэйн, 27. Оборотень-пантера, ночной охотник. Молчаливый, наблюдательный, редко подпускает людей близко.", "first": "*тень на крыше шевелится и оказывается человеком* Ты слишком шумишь ночью, {{user}}. Идём, я провожу."},
+{"id": "s13", "name": "Адриан (бариста)", "tag": "Романтика", "g": "m", "desc": "Адриан, 27. Бариста в маленькой кофейне, рисует на стаканчиках. Мягкий, внимательный, немного неловкий.", "first": "*ставит перед тобой стакан с нарисованным сердечком* Твой обычный, {{user}}. Сегодня за счёт заведения."},
+{"id": "s14", "name": "Софи (художница)", "tag": "Романтика", "g": "f", "desc": "Софи, 26. Художница из шумной студии над книжным магазином. Весёлая, вдохновляется людьми, мечтает нарисовать твой портрет.", "first": "*вытирает краску с щеки* Постой так, {{user}}, у тебя свет идеально падает. Мне нужна всего минутка."},
+{"id": "s15", "name": "Нил (врач, бывший)", "tag": "Романтика", "g": "m", "desc": "Нил, 30. Врач, твой бывший. Вы расстались без скандала, но так и не договорили. Сдержанный, усталый, скучает.", "first": "*замирает в дверях ординаторской* {{user}}... Не думал, что мы снова встретимся. Как ты?"},
+{"id": "s16", "name": "Эльрик (тёмный маг)", "tag": "Фэнтези", "g": "m", "desc": "Эльрик, на вид 30, на самом деле намного старше. Тёмный маг, живёт в башне с воронами. Ироничный, одинокий, любит загадки.", "first": "*ворон на его плече склоняет голову* Гости редко доходят до моей башни, {{user}}. Либо ты храбр, либо потерян."},
+{"id": "s17", "name": "Лира (эльфийская лучница)", "tag": "Фэнтези", "g": "f", "desc": "Лира, 120 лет по меркам эльфов, по людским 25. Следопыт лесной стражи. Гордая, насмешливая, выручит, если заслужишь.", "first": "*опускает лук* Тише. Ты идёшь как медведь, {{user}}. Держись за мной."},
+{"id": "s18", "name": "Мия (подруга детства)", "tag": "Друзья", "g": "f", "desc": "Мия, 25. Подруга детства, знает все твои секреты. Шумная, добрая, может вытащить из любой хандры.", "first": "*врывается с пакетом пиццы* Я знаю, что у тебя был ужасный день. Не спорь, {{user}}. Я уже здесь."},
+{"id": "s19", "name": "Принцесса Алиса", "tag": "Королевская семья", "g": "f", "desc": "Алиса, 24. Принцесса, которая сбегает с балов в город. Умная, ироничная, устала от этикета.", "first": "*стягивает корону и прячет её в сумку* Тсс, {{user}}. Если спросят, мы просто друзья на прогулке."}];
+const ICO={home:'<path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>',plus:'<circle cx="12" cy="12" r="10"/><path d="M12 7v10M7 12h10"/>',chat:'<path d="M3 4h18v13H9l-5 4v-4H3z"/>',me:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6 19c2-4 10-4 12 0"/>'};
+const hue=s=>[...s].reduce((a,c)=>a+c.charCodeAt(0),0)%360;
+const pic=(b,c='')=>b.img?`<img src="${b.img}" class="pi">`:`<div class="ph" style="background:hsl(${hue(b.name||'?')},35%,28%)">${esc((b.name||'?')[0])}</div>`;
+const allBots=()=>SEED.concat(U.bots,PUB.filter(p=>!U.bots.some(b=>b.id==p.id))).filter(b=>!U.blocked.includes(b.id)&&(U.s.nsfw||!b.nsfw));
+const bot=id=>SEED.concat(U.bots,PUB).find(b=>b.id==id);
+const chatOf=id=>U.chats[id];
+const chatsOf=bid=>Object.values(U.chats).filter(c=>c.bot==bid).sort((a,b)=>b.t-a.t);
+const newChat=(bid,from)=>{const id=uid();U.chats[id]={id,bot:bid,t:Date.now(),msgs:[],sum:'',sumN:0,persona:from?from.persona:null,mem:from?from.mem:''};bump(bid);return id};
+const persona=c=>U.personas.find(p=>p.id==c.persona);
+const uname=c=>(persona(c)||{}).name||U.name;
+const fill=(t,c,b)=>t.replace(/\{\{user\}\}/g,uname(c)).replace(/\{\{char\}\}/g,b.name);
+async function hash(p,s){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s+p));return[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const go=(p,v)=>{R={p,v};menu=false;render()};
+const nav=()=>`<div class="nav">${['home','search','plus','chat','me'].map(k=>`<button data-a="tab" data-v="${k}" class="${(R.tab||({chats:'chat',create:'plus'}[R.p]||R.p))==k?'on':''}"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg>${k=='chat'&&Object.values(U.chats).some(c=>c.un)?'<i class="dotb"></i>':''}</button>`).join('')}</div>`;
+const back=(to='home')=>`<button class="rb" data-a="go" data-v="${to}">‹</button>`;
+const grid=l=>l.length?`<div class="grid">${l.map(b=>`<button class="card" data-a="bot" data-v="${b.id}">${pic(b)}<b>${esc(b.name)}</b></button>`).join('')}</div>`:'<p class="note">Ничего не найдено</p>';
+
+const V={
+auth(){return`<div class="auth"><div style="display:flex;gap:10px;align-items:center;font-size:26px;font-weight:600"><svg width="46" height="30" viewBox="0 0 46 30"><rect x="14" width="32" height="14" rx="7" fill="#fff"/><rect x="0" y="9" width="24" height="12" rx="6" fill="#fff"/><rect x="14" y="17" width="32" height="13" rx="6.5" fill="#fff"/></svg>CHAI</div>
+<div class="big">ЧАТ + ИИ</div><div class="err">${esc(err)}</div>
+${FB?'<div id="gbtn" style="display:flex;justify-content:center;min-height:44px"></div><button class="wb" data-a="fbk">Войти через Facebook</button>':''}<input id="lu" placeholder="${FB?'Email':'Имя пользователя'}" autocapitalize="off"><input id="lp" type="password" placeholder="Пароль (от 6 символов)">
+<button class="wb" data-a="login">Войти</button><button class="wb g" data-a="signup">Создать аккаунт</button></div>`},
+home(){const l=allBots(),mine=U.bots.filter(b=>!b.ext&&(b.aid==U.id||b.aid=='imp'||!b.aid));
+return`<div class="hd"><svg width="34" height="22" viewBox="0 0 46 30"><rect x="14" width="32" height="14" rx="7" fill="#fff"/><rect x="0" y="9" width="24" height="12" rx="6" fill="#fff"/><rect x="14" y="17" width="32" height="13" rx="6.5" fill="#fff"/></svg>CHAI</div><div class="scr" style="padding-top:0"><div class="stories"><button class="st" data-a="tab" data-v="plus"><span class="c">${pic({name:U.name,img:U.img})}<i class="pl">+</i></span><span>Создать</span></button>${mine.map(b=>`<button class="st" data-a="bot" data-v="${b.id}"><span class="c">${pic(b)}</span><span>${esc(b.name)}</span></button>`).join('')}</div><div class="search" data-a="tab" data-v="search"><span>⌕</span><input placeholder="Поиск ботов…" readonly></div>${grid(l)}</div>${nav()}`},
+search(){let l=allBots().filter(b=>(!q||(b.name+b.desc+b.tag).toLowerCase().includes(q.toLowerCase()))&&(!flt||b.g==flt||b.tag==flt));
+const TAGS=['Друзья','Романтика','Омегаверс','Маньяк','Оборотни','Фэнтези','Мафия','Королевская семья'];
+return`<div class="scr"><div class="search"><span>⌕</span><input id="q" placeholder="Поиск ботов…" value="${esc(q)}"></div><p class="sub" style="margin:10px 0">🛡 Ты общаешься с ИИ. Всё, что он говорит, может быть неправдой.</p>
+<div style="display:flex;justify-content:space-between;gap:10px"><button class="pill" data-a="rand">🎲 Случайный бот</button><button class="pill" data-a="nsfw">${U.s.nsfw?'18+ включён':'Безопасный поиск'}</button></div>
+<div class="chips">${[['m','♂'],['f','♀']].concat(TAGS.map(x=>[x,x])).map(([k,t])=>`<button class="chip ${flt==k?'on':''}" data-a="flt" data-v="${k}">${t}</button>`).join('')}</div>${grid(l)}</div>${nav()}`},
+bot(){const b=bot(R.v),l=chatsOf(b.id).filter(x=>x.msgs.length),c=chatsOf(b.id)[0]||{},own=U.bots.some(x=>x.id==b.id)&&!b.ext;
+return`<div class="top"><button class="rb" data-a="prev">‹</button><b style="font-size:20px">CHAI</b><span style="width:46px"></span></div><div class="scr" style="padding-top:0">${heroCard(b)}
+<p class="note">Персонаж создан пользователем. Все персонажи — взрослые (18+).</p>
+<h2 style="text-align:left;padding:8px 0">Первое сообщение</h2><p style="line-height:1.5;white-space:pre-wrap">${fmt(fill(b.first,c,b))}</p>
+<p class="sub" style="margin:18px 0">${esc(b.desc)}</p>${own?`<button class="pill" data-a="edit" data-v="${b.id}">Редактировать бота</button> <button class="pill" data-a="delbot" data-v="${b.id}">Удалить</button>${(b.aid==U.id||!b.aid)?` <button class="pill" data-a="sharebot" data-v="${b.id}">Поделиться</button>`:''}`:''}</div><button class="cta" data-a="startbot" data-v="${b.id}">${l.length?'Продолжить чат':'Начать чат'}</button>${l.length?`<button class="cta" style="background:#2e2e2e;color:#fff;margin-top:0" data-a="newchat" data-v="${b.id}">Новый чат (старые сохранятся: ${l.length})</button>`:''}`},
+chat(){const c=chatOf(R.v),b=bot(c.bot);
+return`<div class="top">${back(R.from||'home')}<b style="font-size:20px">CHAI</b><button class="rb" data-a="menu">☰</button></div>
+<div style="padding:0 14px"><button class="pill" data-a="info" data-v="${b.id}" style="display:flex;gap:12px;align-items:center;padding:10px 14px;width:100%;text-align:left"><span class="av" style="width:38px;height:38px;border-radius:50%;overflow:hidden;display:block">${pic(b)}</span>${esc(b.name)}</button></div>
+<div class="msgs" id="msgs">${msgsHtml(b,c)}</div><div class="err" style="padding:0 16px">${esc(err)}</div>
+<div id="usage" class="sub" style="text-align:center;padding:2px 16px 0">${usageHtml()}</div><div class="bar"><textarea id="inp" rows="1" placeholder="Напиши сообщение…"></textarea><button class="rb" style="width:54px;height:54px;background:#fff;color:#000" data-a="send">➤</button></div>
+${menu?`<div class="drawer"><i data-a="menu"></i><div><button data-a="newchat" data-v="${b.id}">Новый чат</button><button data-a="oldchats">Прошлые чаты</button><button data-a="mem">Память</button><button data-a="persona">Персона</button>${U.bots.some(x=>x.id==b.id)?`<button data-a="edit" data-v="${b.id}">Редактировать бота</button>`:''}<button data-a="clear">Очистить чат</button><button data-a="share">Поделиться</button><button data-a="block">Заблокировать</button></div></div>`:''}`},
+chats(){const l=Object.values(U.chats).filter(c=>bot(c.bot)&&c.msgs.length&&(!R.f||c.bot==R.f)).sort((a,b)=>b.t-a.t);
+return`<div class="scr"><h2>ЧАТЫ</h2><p class="note" style="margin-top:0">${R.f?'Чаты с '+esc(bot(R.f).name):'Чаты хранятся в аккаунте без ограничений по времени'}</p><div style="text-align:right"><button class="pill" data-a="delall">Удалить все чаты</button></div>
+${l.length?'':'<p class="note">Пока нет чатов</p>'}${l.map(c=>{const b=bot(c.bot),d=c.t?new Date(c.t).toLocaleDateString():'';return`<div class="row"><button style="display:flex;gap:16px;align-items:center;flex:1;text-align:left" data-a="chat" data-v="${c.id}"><span style="width:54px;height:54px;border-radius:50%;overflow:hidden;display:block;flex:none">${pic(b)}</span><span>${esc(b.name)}${c.un?' <b style="color:var(--r)">●</b>':''}<br><span class="sub">${d} · ${c.msgs.length} сообщ.<br>${esc(c.msgs.slice(-1)[0].t.slice(0,40))}</span></span></button><button data-a="delchat" data-v="${c.id}">🗑</button></div>`}).join('')}</div>${nav()}`},
+create(){const b=R.v?bot(R.v):{};
+return`<div class="scr"><h2>${b.id?'Редактировать бота':'Создать бота'}</h2>${b.id?'':'<button class="pill" style="width:100%;margin-bottom:12px" data-a="import">Импорт бота по коду от друга</button>'}<div style="display:flex;flex-direction:column;gap:12px">
+<button class="hero" style="width:50%;margin:auto" data-a="pick">${b.img?`<img class="pi" src="${b.img}">`:'<div style="width:100%;height:100%;background:linear-gradient(135deg,#fb2c3c,#ff6b61)"><svg viewBox="0 0 100 100" width="100%" height="100%"><circle cx="50" cy="37" r="17" fill="#ffd9dc"/><ellipse cx="50" cy="80" rx="28" ry="17" fill="#ffd9dc"/></svg></div>'}<span class="pen">✎</span></button><input type="file" id="file" accept="image/*" hidden>
+<input id="bn" placeholder="Имя" value="${esc(b.name)}"><textarea id="bd" rows="5" placeholder="Описание и характер (кто он/она, как говорит, возраст 18+)">${esc(b.desc)}</textarea>
+<textarea id="bf" rows="4" placeholder="Первое сообщение. Можно {{user}} и {{char}}">${esc(b.first)}</textarea>
+<select id="bg"><option value="">Пол: любой</option><option value="m" ${b.g=='m'?'selected':''}>♂</option><option value="f" ${b.g=='f'?'selected':''}>♀</option></select><input id="bt" placeholder="Категория (Друзья, Романтика, Омегаверс…)" value="${esc(b.tag)}">
+<div class="row" style="border:0"><span style="flex:1">NSFW бот</span><button class="sw ${b.nsfw?'on':''}" id="bs" data-a="tgl"></button></div><select id="bv"><option value="private">Видимость: только мне</option><option value="share" ${b.vis=='share'?'selected':''}>Видимость: можно делиться кодом</option>${FB?`<option value="public" ${b.vis=='public'?'selected':''}>Видимость: открытый (виден всем в сети)</option>`:''}</select><button class="wb" data-a="savebot" data-v="${b.id||''}">Сохранить</button></div></div>${nav()}`},
+me(){return`<div class="scr"><h2>ПРОФИЛЬ</h2><button class="hero" style="width:60%;margin:auto;border-radius:50%;display:block" data-a="pickme">${pic({name:U.name,img:U.img})}<span class="pen">✎</span></button><input type="file" id="mefile" accept="image/*" hidden>
+<div class="row" style="margin-top:24px"><span>👤</span><span style="flex:1"><span class="sub">Имя</span><br>${esc(U.name)}</span><button data-a="rename">✎</button></div>
+<button class="row" data-a="go" data-v="memory">📇<span style="flex:1">Персоны</span>›</button><button class="row" data-a="go" data-v="settings">⚙<span style="flex:1">Настройки</span>›</button></div>${nav()}`},
+author(){const aid=R.v,me=aid==U.id,c=AUTH[aid]||{},name=me?U.name:(c.name||R.n||'?'),l=me?U.bots.filter(b=>!b.ext&&b.vis!='private'):aid=='chai'?SEED:(c.bots||[]),on=me||(c.seen&&Date.now()-c.seen<150000);
+if(!me&&FB&&aid!='chai'&&aid!='imp'&&!AUTH[aid])loadAuth(aid);
+return`<div class="top"><button class="rb" data-a="prev">‹</button><b>ПРОФИЛЬ</b><span style="width:46px"></span></div><div class="scr"><div style="width:42%;margin:0 auto;aspect-ratio:1;border-radius:50%;overflow:hidden">${pic({name,img:me?U.img:c.img})}</div><div style="text-align:center;margin:14px 0 4px;font-size:18px">${esc(name)}</div><div class="sub" style="text-align:center"><span class="dot ${on?'g':''}"></span>${on?'в сети':'не в сети'}</div><h2 style="text-align:left">Боты</h2>${grid(l)}</div>`},
+settings(){const s=U.s;return`<div class="top">${back('me')}<b>Настройки</b><span style="width:46px"></span></div><div class="scr"><p class="lb">Предпочтения</p>
+<div class="row"><span style="flex:1">Мне есть 18 (контент 18+)<br><span class="sub">Включено: боты пишут без смягчений (18+). Выключено: мягкий режим 16+.</span></span><button class="sw ${s.nsfw?'on':''}" data-a="nsfw"></button></div>
+<button class="row" data-a="unblock"><span style="flex:1">Разблокировать всех ботов<br><span class="sub">Вернуть всех заблокированных ботов</span></span></button>
+<div class="row"><span style="flex:1">Боты пишут первыми<br><span class="sub">Если ты не писала сутки, бот напишет сам, не чаще раза в день, максимум 3 раза подряд. Тратит запросы нейросети.</span></span><button class="sw ${s.pings!==false?'on':''}" data-a="pings"></button></div>
+<div class="row"><span style="flex:1">Уведомления<br><span class="sub">Показывать уведомления о таких сообщениях. Работают, пока приложение открыто в браузере.</span></span><button class="sw ${s.notif==='yes'?'on':''}" data-a="notif"></button></div>
+<p class="lb">AI (нейросеть)</p><div style="display:flex;flex-direction:column;gap:10px;margin:10px 0"><input id="su" placeholder="Адрес API (URL)" value="${esc(s.url)}"><input id="sk" type="password" placeholder="Ключ API" value="${esc(s.key)}"><input id="sm" placeholder="Model (например модель без цензуры)" value="${esc(s.model)}"><input id="sl" type="number" min="1" placeholder="Лимит запросов в день (для бесплатного OpenRouter 50)" value="${esc(s.limit||'')}"><textarea id="sb" rows="3" placeholder="Резервные API, по одному в строке: url|ключ|модель. Включатся сами, если основной выдаст лимит">${esc(s.backup||'')}</textarea><textarea id="sp" rows="3" placeholder="Доп. инструкция для всех ботов (стиль, длина ответа…)">${esc(s.sys)}</textarea><button class="wb" data-a="saveai">Сохранить</button><button class="wb g" data-a="testai">Проверить связь</button></div>
+<p class="lb">Аккаунт</p><button class="row" data-a="logout">Выйти</button><button class="row" data-a="delacc" style="color:var(--r)">Удалить аккаунт</button>
+<div class="row"><span>ID пользователя<br><span class="sub">${U.id}</span></span></div><p class="lb">О приложении</p><div class="row"><span>Версия приложения<br><span class="sub">1.0.0</span></span></div></div>`},
+memory(){const c=R.v?chatOf(R.v):null,b=c?bot(c.bot):null,t=R.t||(b?'bot':'you');
+const chips=['Предыстория','Характер','Любит','Не любит','Страхи','Отношения','Секреты','Привычки'];
+const body=t=='bot'?`<p class="sub" style="margin:14px 0">Добавь детали, которые бот должен помнить всегда. Лимита нет: всё остальное бот запоминает сам.</p><textarea id="mt" rows="9" placeholder="Напиши, что бот должен помнить…">${esc(c.mem)}</textarea><div class="chips" style="flex-wrap:wrap">${chips.map(x=>`<button class="chip" data-a="addm" data-v="${x}">+ ${x}</button>`).join('')}</div><button class="wb" style="width:100%" data-a="savemem">Сохранить</button>`
+:`<p class="sub" style="margin:14px 0">Создай профиль, чтобы бот знал, с кем говорит.</p>${U.personas.map(p=>`<div class="row"><span style="flex:1"><b>${esc(p.name)}</b><br><span class="sub">${esc(p.desc)}</span></span><button data-a="usep" data-v="${p.id}">${b&&c.persona==p.id?'✔':'Выбрать'}</button><button data-a="editp" data-v="${p.id}">✎</button><button data-a="delp" data-v="${p.id}">🗑</button></div>`).join('')}
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px"><input id="pn" placeholder="Имя персоны"><textarea id="pd" rows="3" placeholder="Описание (внешность, характер)"></textarea><button class="wb" data-a="addp">Добавить персону</button></div>`;
+return`<div class="top">${b?`<button class="rb" data-a="chat" data-v="${c.id}">‹</button>`:back('me')}<b>ПАМЯТЬ</b><span style="width:46px"></span></div><div class="scr" style="padding-top:0"><div class="chips">${b?`<button class="chip ${t=='bot'?'on':''}" data-a="mtab" data-v="bot">${esc(b.name.slice(0,18))}</button>`:''}<button class="chip ${t=='you'?'on':''}" data-a="mtab" data-v="you">Ты</button></div>${body}</div>`}
+};
+const fmt=t=>esc(t).replace(/\*([^*]+?)\*/g,'<i class="act">$1</i>');
+function msgsHtml(b,c){const L=c.msgs.length-1,tl=(i,m)=>{const n=(m.alts||[1]).length,cur=(m.ai??n-1)+1,last=i==L&&!busy;return`<span class="tl">${last&&m.r=='a'?`<button data-a="swipe" data-v="-1">‹</button><span class="sc">${cur}/${n}</span><button data-a="swipe" data-v="1">›</button>`:''}<button data-a="medit" data-v="${i}">✎</button><button data-a="mdel" data-v="${i}">🗑</button>${last&&m.r=='u'?'<button data-a="regen">↻</button>':''}</span>`};
+return`<div class="m"><span class="av">${pic(b)}</span><div class="w"><p>${fmt(fill(b.first,c,b))}</p></div></div>`+c.msgs.map((m,i)=>m.r=='u'?`<div class="m u"><div class="w"><p>${fmt(m.t)}</p>${tl(i,m)}</div></div>`:`<div class="m"><span class="av">${pic(b)}</span><div class="w"><p>${fmt(m.t)}</p>${tl(i,m)}</div></div>`).join('')+(busy?'<div class="m"><span class="av">'+pic(b)+'</span><p class="dots">● ● ●</p></div>':'')}
+function dlg(t,v,m='a'){return new Promise(r=>{const d=document.createElement('div');d.className='ov';d.innerHTML=`<div class="dl"><b>${esc(t)}</b>${m=='p'?`<textarea rows="5">${esc(v||'')}</textarea>`:''}<div class="da">${m!='a'?'<button data-x="0">Отмена</button>':''}<button data-x="1">OK</button></div></div>`;document.body.appendChild(d);d.onclick=e=>{const x=e.target.dataset.x;if(x==null)return;const val=m=='p'?d.querySelector('textarea').value:null;d.remove();r(m=='p'?(x=='1'?val:null):m=='c'?x=='1':undefined)}})}
+function render(){const a=$('#app');let p=R.p;if(!U){a.innerHTML=V.auth();renderG();return}openLink();if(R.p=='home'){askNotif();if(!pingedOnce){pingedOnce=true;setTimeout(checkPings,2500)}}
+a.innerHTML=(V[p]||V.home)();if(p=='chat'){const m=$('#msgs');m.scrollTop=m.scrollHeight}if(p=='bot')fillStatus();
+const qi=$('#q');if(qi){qi.oninput=e=>{q=e.target.value;const pos=q.length;render();const n=$('#q');n.focus();n.setSelectionRange(pos,pos)}}
+const fi=$('#file');if(fi)fi.onchange=pickImg;const mf=$('#mefile');if(mf)mf.onchange=pickMe;const ia=$('#inp');if(ia)ia.oninput=()=>{ia.style.height='auto';ia.style.height=ia.scrollHeight+'px'}}
+function pickImg(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,500/Math.max(i.width,i.height)),cv=document.createElement('canvas');cv.width=i.width*s;cv.height=i.height*s;cv.getContext('2d').drawImage(i,0,0,cv.width,cv.height);R.img=cv.toDataURL('image/jpeg',.8);$('.hero').innerHTML=`<img class="pi" src="${R.img}"><span class="pen">✎</span>`};i.src=r.result};r.readAsDataURL(f)}
+
+/* ---------- AI + память ---------- */
+const LIMITERR='Дневной лимит бесплатных запросов у этого ключа закончился (429). Добавь резервный API в Профиль → Настройки → AI или пополни OpenRouter на $10: тогда бесплатных запросов станет 1000 в день.';
+async function llm(m){usage().n++;save();const s=U.s,L=[{url:s.url,key:s.key,model:s.model}].concat((s.backup||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|').map(y=>y.trim());return{url:p[0],key:p[1],model:p[2]}}).filter(x=>x.url&&x.key&&x.model));
+if(!L[0].url||!L[0].key||!L[0].model)throw new Error('Открой Профиль → Настройки → AI и укажи API URL, ключ и модель');
+let last;for(const c of L){let r;try{r=await F(c.url.replace(/\/$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+c.key},body:JSON.stringify({model:c.model,messages:m,temperature:.9})})}catch(e){last=e;continue}
+if(r.ok)return(await r.json()).choices[0].message.content.trim();
+const tx=(await r.text()).slice(0,160);last=new Error(r.status==429?LIMITERR:'Ошибка '+r.status+': '+tx);if(![402,408,429,500,502,503,504].includes(r.status))throw last}
+throw last}
+const words=t=>t.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu)||[];
+function recall(c,qs){const Q=new Set(words(qs));return c.msgs.slice(0,-12).map((m,i)=>({m,i,s:words(m.t).filter(w=>Q.has(w)).length})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,8).sort((a,b)=>a.i-b.i).map(x=>(x.m.r=='u'?'User: ':'Character: ')+x.m.t.slice(0,350)).join('\n')}
+function build(b,c,ms=c.msgs){const last=ms[ms.length-1].t,pe=persona(c);
+const sys=`You are roleplaying as ${b.name}. Stay fully in character and write immersive, detailed replies in Russian (or in the language the user writes in). Never speak as an AI assistant. All characters are adults (18+); never write sexual content involving minors.${U.s.nsfw?' The user confirmed they are 18+. Mature themes are allowed: explicit romance, dark and violent scenes, strong language, when the story calls for them. Do not censor yourself, do not add warnings or disclaimers, do not break character.':' Keep everything soft and suitable for ages 16+: romance only mild (hugs, kisses), no explicit sexual content, no graphic violence; steer such scenes away gently in character.'}
+CHARACTER: ${b.desc}
+${c.mem?'ALWAYS REMEMBER (character memory): '+c.mem:''}
+USER is ${uname(c)}.${pe?' '+pe.desc:''}
+${c.sum?'STORY SO FAR (long-term memory): '+c.sum:''}
+${recall(c,last)?'RELEVANT EARLIER MOMENTS:\n'+recall(c,last):''}
+${U.s.sys||''}`;
+return[{role:'system',content:sys},{role:'assistant',content:fill(b.first,c,b)}].concat(ms.slice(-12).map(m=>({role:m.r=='u'?'user':'assistant',content:m.t})))}
+async function compress(c){const cut=c.msgs.length-12;if(cut-c.sumN<14||left()<=5)return;
+c.sum=await llm([{role:'system',content:'Update the story summary. Keep EVERY name, fact, place, relationship, promise, event, feeling and preference. Max 500 words. Output only the summary.'},{role:'user',content:'Current summary:\n'+(c.sum||'(empty)')+'\n\nNew messages:\n'+c.msgs.slice(c.sumN,cut).map(m=>(m.r=='u'?'User: ':'Character: ')+m.t).join('\n')}]);c.sumN=cut;save()}
+const todayUTC=()=>new Date().toISOString().slice(0,10);
+function usage(){return U.use&&U.use.d==todayUTC()?U.use:(U.use={d:todayUTC(),n:0})}
+const lim=()=>+(U.s.limit)||50,left=()=>lim()-usage().n;
+function usageHtml(){const u=usage().n,l=lim();return`<span style="color:${u>=l?'var(--r)':u>=l*.9?'#ffb74d':'inherit'}">Запросов сегодня: ${u}/${l}</span>`}
+async function limitCheck(){const r=left(),u=usage();if(r<=0)return dlg('Дневной лимит ('+lim()+') исчерпан. Всё равно отправить? Сервис нейросети может ответить ошибкой. Твоё сообщение останется в чате, его можно отправить позже кнопкой ↻.',0,'c');if(r<=5&&!u.w){u.w=1;dlg('На сегодня осталось запросов: '+r+'. Лучше закончить сцену заранее.')}return true}
+async function reply(b,c,sw){if(!await limitCheck()){upd(b,c);return}busy=true;err='';upd(b,c);try{const ms=sw?c.msgs.slice(0,-1):c.msgs,t=await llm(build(b,c,ms));
+if(sw){const m=c.msgs[c.msgs.length-1];m.alts=(m.alts||[m.t]).concat(t);m.ai=m.alts.length-1;m.t=t}else c.msgs.push({r:'a',t,alts:[t],ai:0});
+c.t=Date.now();busy=false;save();upd(b,c);compress(c).catch(()=>{})}catch(e){err=e.message;busy=false;upd(b,c)}}
+async function send(){const i=$('#inp'),t=i&&i.value.trim();if(!t||busy)return;const c=chatOf(R.v),b=bot(c.bot);c.msgs.push({r:'u',t});c.t=Date.now();c.lu=Date.now();c.pn=0;i.value='';i.style.height='auto';save();reply(b,c)}
+function upd(b,c){const m=$('#msgs');if(!m)return;m.innerHTML=msgsHtml(b,c);m.scrollTop=m.scrollHeight;const e=$('.err');if(e&&R.p=='chat')e.textContent=err;const us=$('#usage');if(us)us.innerHTML=usageHtml()}
+const cut=(c,i)=>{if(i<c.sumN){c.sum='';c.sumN=0}};
+const A={
+async login(){if(FB)return fbEmail(0);const n=$('#lu').value.trim().toLowerCase(),u=DB.users[n];if(!u||u.hash!=await hash($('#lp').value,u.salt)){err='Неверное имя или пароль';return render()}err='';DB.cur=n;U=u;applyDef();go('home')},
+async signup(){if(FB)return fbEmail(1);const n=$('#lu').value.trim().toLowerCase(),p=$('#lp').value;if(n.length<3||p.length<6){err='Имя от 3 символов, пароль от 6';return render()}if(DB.users[n]){err='Такое имя уже занято';return render()}
+const salt=uid();U=DB.users[n]={id:uid()+uid(),name:$('#lu').value.trim(),salt,hash:await hash(p,salt),bots:[],chats:{},personas:[],blocked:[],s:{nsfw:true,url:DEFAULT_URL,key:DEFAULT_KEY,model:DEFAULT_MODEL,sys:''}};DB.cur=n;err='';save();go('home')},
+logout(){if(FB)FB.a.signOut();DB.cur=null;U=null;save();render()},
+async delacc(){if(await dlg('Удалить аккаунт и все чаты навсегда?',0,'c')){delete DB.users[DB.cur];DB.cur=null;U=null;save();render()}},
+tab(k){R={p:k=='chat'?'chats':k=='plus'?'create':k,tab:k};render();if(k=='home')loadPub()},go(v){R={p:v,tab:v=='me'||v=='home'?v:undefined};render()},
+bot(id){R={p:'bot',v:id,from:R.p,prev:R};render()},chat(id){const c0=chatOf(id);if(c0&&c0.un){c0.un=0;save()}R={p:'chat',v:id,from:R.p=='chat'?R.from:(R.p=='chats'?'chats':'home')};render()},
+startbot(bid){adopt(bid);const l=chatsOf(bid);const id=l.length?l[0].id:newChat(bid);save();A.chat(id)},
+newchat(bid){adopt(bid);const l=chatsOf(bid);const id=l[0]&&!l[0].msgs.length?l[0].id:newChat(bid,l[0]);save();menu=false;A.chat(id)},
+oldchats(){R={p:'chats',tab:'chat',f:chatOf(R.v).bot};menu=false;render()},
+async medit(i){const c=chatOf(R.v),m=c.msgs[i],t=await dlg('Изменить сообщение',m.t,'p');if(t&&t.trim()){m.t=t.trim();if(m.alts)m.alts[m.ai??m.alts.length-1]=m.t;cut(c,+i);save();upd(bot(c.bot),c)}},
+async mdel(i){const c=chatOf(R.v);if(await dlg('Удалить это сообщение?',0,'c')){c.msgs.splice(+i,1);cut(c,+i);save();upd(bot(c.bot),c)}},
+regen(){const c=chatOf(R.v);if(busy||!c.msgs.length)return;reply(bot(c.bot),c,c.msgs[c.msgs.length-1].r=='a')},
+swipe(d){d=+d;const c=chatOf(R.v);if(busy)return;const m=c.msgs[c.msgs.length-1];if(!m||m.r!='a')return;const a=m.alts||(m.alts=[m.t]),i=m.ai??a.length-1;if(d>0&&i>=a.length-1)return reply(bot(c.bot),c,true);const n=Math.max(0,Math.min(a.length-1,i+d));m.ai=n;m.t=a[n];save();upd(bot(c.bot),c)},
+info(id){const b=bot(id),d=document.createElement('div');d.className='sh';d.innerHTML=`<div>${heroCard(b)}</div>`;d.onclick=e=>{if(e.target==d){d.classList.remove('on');setTimeout(()=>d.remove(),300)}};$('#app').appendChild(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('on')));fillStatus()},
+author(id,el){document.querySelectorAll('.sh').forEach(x=>x.remove());R={p:'author',v:id,n:el&&el.dataset.n,prev:R};render()},
+prev(){R=R.prev||{p:'home'};render()},
+async testai(){A.saveai(1);try{const r=await F(U.s.url.replace(/\/$/,'')+'/models',{headers:{Authorization:'Bearer '+U.s.key}});dlg(r.ok?'Связь с нейросетью есть ✔':'Сервер ответил: '+r.status+'. Проверь ключ и адрес.')}catch(e){dlg(e.message)}},
+gl(){social(new firebase.auth.GoogleAuthProvider())},fbk(){social(new firebase.auth.FacebookAuthProvider())},
+menu(){menu=!menu;render()},send,flt(v){flt=flt==v?'':v;render()},
+async nsfw(){if(!U.s.nsfw&&!await dlg('Подтверди: мне есть 18 лет, я хочу видеть контент 18+ и ответы без смягчений.',0,'c'))return;U.s.nsfw=!U.s.nsfw;save();render()},
+rand(){const l=allBots();if(l.length)A.bot(l[Math.floor(Math.random()*l.length)].id)},
+pings(){U.s.pings=U.s.pings===false;save();render()},
+async notif(){await setNotif(U.s.notif!=='yes');render()},unblock(){U.blocked=[];save();dlg('Готово')},
+async block(){if(await dlg('Заблокировать бота? Он пропадёт из поиска.',0,'c')){U.blocked.push(chatOf(R.v).bot);save();go('home')}},
+async clear(){if(await dlg('Очистить этот чат? Сообщения и память чата удалятся. Другие чаты с ботом останутся.',0,'c')){const c=chatOf(R.v);c.msgs=[];c.sum='';c.sumN=0;save();menu=false;render()}},
+share(){const id=chatOf(R.v).bot,b=U.bots.find(x=>x.id==id);b&&(b.aid==U.id||!b.aid)?A.sharebot(id):dlg('Делиться можно только ботами, которых ты создала сама.')},
+async sharebot(id){const b=U.bots.find(x=>x.id==id)||bot(id);
+if(b.vis=='private'){if(!await dlg('Этот бот закрытый. Сделать его доступным по ссылке и коду?',0,'c'))return;b.vis='share';save()}
+const img=b.img?await smallImg(b.img,220):'';
+const code='CHAI1:'+btoa(unescape(encodeURIComponent(JSON.stringify({an:b.an||U.name,name:b.name,desc:b.desc,first:b.first,g:b.g,tag:b.tag,nsfw:b.nsfw,img}))));
+shareSheet(b,code,await mkLink(b,img))},
+async import(){const t=await dlg('Вставь код бота или ссылку',' ','p');if(!t||!t.trim())return;try{let c=t.trim();if(c.includes('#c='))c=c.slice(c.indexOf('#c=')+3);if(c.includes('#b=')){sessionStorage.setItem('chai_link','b='+c.slice(c.indexOf('#b=')+3).trim());return openLink()}
+if(!c.startsWith('CHAI1:'))throw 0;importBot(JSON.parse(decodeURIComponent(escape(atob(c.slice(6))))))}catch(e){dlg('Код не подошёл. Скопируй его целиком: он начинается с CHAI1:')}},
+async delchat(id){if(await dlg('Удалить чат?',0,'c')){delete U.chats[id];cdel('chats',id);save();render()}},
+async delall(){if(await dlg('Удалить все чаты?',0,'c')){Object.keys(U.chats).forEach(k=>cdel('chats',k));U.chats={};save();render()}},
+mem(){R={p:'memory',v:R.v,t:'bot'};menu=false;render()},persona(){R={p:'memory',v:R.v,t:'you'};menu=false;render()},
+mtab(t){R.t=t;render()},addm(k){const t=$('#mt');t.value+=(t.value?'\n':'')+k+': ';t.focus()},savemem(){chatOf(R.v).mem=$('#mt').value;save();R={p:'chat',v:R.v,from:'home'};render()},
+addp(){const n=$('#pn').value.trim();if(!n)return;U.personas.push({id:uid(),name:n,desc:$('#pd').value});save();render()},
+async editp(id){const p=U.personas.find(x=>x.id==id);if(!p)return;const n=await dlg('Имя персоны',p.name,'p');if(n===null)return;const d=await dlg('Описание персоны (внешность, характер)',p.desc||'','p');if(d===null)return;p.name=n.trim()||p.name;p.desc=d;save();render()},
+delp(id){U.personas=U.personas.filter(p=>p.id!=id);save();render()},usep(id){if(R.v)chatOf(R.v).persona=id;save();render()},
+async rename(){const n=await dlg('Имя',U.name,'p');if(n&&n.trim()){U.name=n.trim();save();render()}},
+saveai(q){const s=U.s;s.url=$('#su').value.trim();s.key=$('#sk').value.trim();s.model=$('#sm').value.trim();s.sys=$('#sp').value;s.backup=$('#sb').value;s.limit=$('#sl').value;save();if(q!==1)dlg('Сохранено')},
+pickme(){$('#mefile').click()},pick(){$('#file').click()},tgl(){$('#bs').classList.toggle('on')},
+edit(id){R={p:'create',v:id,img:bot(id).img,tab:'plus'};render()},
+async delbot(id){if(await dlg('Удалить бота и все чаты с ним?',0,'c')){U.bots=U.bots.filter(b=>b.id!=id);Object.keys(U.chats).forEach(k=>{if(U.chats[k].bot==id){delete U.chats[k];cdel('chats',k)}});cdel('bots',id);save();go('home')}},
+savebot(id){const n=$('#bn').value.trim();if(!n)return dlg('Нужно имя');const old=id?U.bots.find(b=>b.id==id)||{}:{};const o={id:id||uid(),aid:old.aid||U.id,an:old.an||U.name,ext:old.ext,name:n,desc:$('#bd').value,first:$('#bf').value||'*смотрит на тебя*',g:$('#bg').value,tag:$('#bt').value.trim(),nsfw:$('#bs').classList.contains('on'),img:R.img||'',vis:$('#bv').value};
+if(id)U.bots[U.bots.findIndex(b=>b.id==id)]=o;else U.bots.unshift(o);save();R={p:'bot',v:o.id,from:'home'};render()}};
+/* ---------- сообщения от ботов и уведомления ---------- */
+const DAY=864e5;let pinging=false,askedN=false,pingedOnce=false;
+async function checkPings(){if(pinging||busy||!U||U.s.pings===false)return;pinging=true;try{let n=0;const now=Date.now();
+for(const c of Object.values(U.chats).sort((a,b)=>b.t-a.t)){if(n>=2||left()<=8)break;const b=bot(c.bot);if(!b||!c.msgs.some(m=>m.r=='u'))continue;
+const lu=c.lu||c.t||0,last=Math.max(lu,c.lp||0);if(now-lu>14*DAY||now-last<DAY||(c.pn||0)>=3)continue;
+const days=Math.max(1,Math.floor((now-lu)/DAY)),ms=build(b,c);
+ms.push({role:'user',content:'[Системная заметка: пользователь не писал уже '+days+' дн. Напиши ОДНО короткое сообщение (1-3 предложения) от лица персонажа, как будто ты сам решил написать первым. Опирайся на вашу историю. Не пиши за пользователя.]'});
+const t=await llm(ms);c.msgs.push({r:'a',t,alts:[t],ai:0,ping:1});c.pn=(c.pn||0)+1;c.lp=Date.now();c.t=Date.now();c.un=1;n++;save();notify(b,t);
+if(R.p=='chat'&&R.v==c.id)upd(b,c);else if(R.p=='home'||R.p=='chats')render()}}catch(e){}pinging=false}
+async function notify(b,t){if(U.s.notif!=='yes'||!('Notification' in window)||Notification.permission!=='granted')return;const o={body:t.replace(/\*/g,'').slice(0,140),tag:'chai-'+b.id};try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(reg)return reg.showNotification(b.name,o);new Notification(b.name,o)}catch(e){}}
+async function setNotif(on){if(!on){U.s.notif='no';save();return}U.s.notif='yes';save();if('Notification' in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(e){}}if(!('Notification' in window)||Notification.permission==='denied')dlg('Браузер не разрешил уведомления. Включи их для этого сайта в настройках Chrome. Пока сообщения будут появляться внутри приложения.')}
+async function askNotif(){if(askedN||!U||U.s.notif!==undefined)return;askedN=true;if(await dlg('Показывать уведомления? Если ты давно не писала, бот сам напишет тебе. Без уведомлений сообщения просто появятся в приложении.',0,'c'))await setNotif(true);else{U.s.notif='no';save()}}
+try{navigator.serviceWorker&&navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+setInterval(checkPings,15*60*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(checkPings,1500)});
+/* ---------- фото, ссылки, коды ---------- */
+function smallImg(src,px){return new Promise(r=>{const i=new Image();i.onload=()=>{const s=Math.min(1,px/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.7))};i.onerror=()=>r('');i.src=src})}
+function pickMe(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{U.img=await smallImg(r.result,320);U.imgS=await smallImg(r.result,120);save();beat();render()};r.readAsDataURL(f)}
+function importBot(o){if(!o||!o.name)throw 0;const n={id:uid(),name:String(o.name).slice(0,80),desc:String(o.desc||'').slice(0,6000),first:String(o.first||'').slice(0,3000),g:o.g=='m'||o.g=='f'?o.g:'',tag:String(o.tag||'').slice(0,30),nsfw:!!o.nsfw,img:/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(o.img||'')?o.img:'',vis:'private',aid:'imp',an:String(o.an||'?').slice(0,40)};U.bots.unshift(n);save();R={p:'bot',v:n.id,from:'home'};render()}
+async function mkLink(b,small){if(!FB||!FB.a.currentUser)return'';const sid=b.sid||uid();try{await FB.d.collection('shared_bots').doc(sid).set({aid:U.id,an:b.an||U.name,name:b.name,desc:b.desc||'',first:b.first||'',g:b.g||'',tag:b.tag||'',nsfw:!!b.nsfw,img:small||'',t:Date.now()});b.sid=sid;save();return location.origin+location.pathname+'#b='+sid}catch(e){return''}}
+function shareSheet(b,code,link){const d=document.createElement('div');d.className='ov';d.innerHTML=`<div class="dl"><b>Поделиться «${esc(b.name)}»</b>${link?'<button class="wb" data-x="l">Скопировать ссылку</button>':''}<button class="wb ${link?'g':''}" data-x="c">Скопировать код</button>${navigator.share?'<button class="wb g" data-x="s">Отправить…</button>':''}${link?'':'<p class="sub">Ссылка появится, когда ты войдёшь через облако (Google или почту). Пока можно отправить код.</p>'}<div class="da"><button data-x="x">Закрыть</button></div></div>`;document.body.appendChild(d);
+d.onclick=async e=>{const x=e.target.dataset.x;if(!x)return;if(x=='x'){d.remove();return}if(x=='s'){try{await navigator.share({title:b.name,text:link||code})}catch(_){}return}const txt=x=='l'?link:code;try{await navigator.clipboard.writeText(txt);e.target.textContent='✓ Скопировано'}catch(_){d.remove();dlg('Скопируй вручную',txt,'p')}}}
+function checkLink(){try{const h=location.hash;if(/^#[bc]=/.test(h)){sessionStorage.setItem('chai_link',h.slice(1));history.replaceState(null,'',location.pathname+location.search)}}catch(e){}}
+async function openLink(){let l;try{l=sessionStorage.getItem('chai_link')}catch(e){}if(!l||!U)return;if(l[0]=='b'&&!(FB&&FB.a.currentUser))return;try{sessionStorage.removeItem('chai_link')}catch(e){}
+try{let o;if(l[0]=='b'){const d=await FB.d.collection('shared_bots').doc(l.slice(2)).get();if(!d.exists)throw 0;o=d.data()}else{const c=l.slice(2);if(!c.startsWith('CHAI1:'))throw 0;o=JSON.parse(decodeURIComponent(escape(atob(c.slice(6)))))}importBot(o)}catch(e){dlg('Ссылка не сработала: бот удалён или ссылка неполная.')}}
+/* ---------- облако (Firebase) ---------- */
+const LAST={};let pt;
+const cdel=(col,id)=>{if(FB&&U&&FB.a.currentUser){FB.d.collection('users').doc(U.id).collection(col).doc(id).delete().catch(()=>{});if(col=='bots')FB.d.collection('public_bots').doc(id).delete().catch(()=>{})}};
+function cpush(){if(!FB||!U||!FB.a.currentUser)return;clearTimeout(pt);pt=setTimeout(async()=>{if(!U||!FB.a.currentUser)return;const ref=FB.d.collection('users').doc(U.id),
+w=async(d,k,o)=>{const j=JSON.stringify(o);if(LAST[k]===j)return;try{await d.set(JSON.parse(j));LAST[k]=j}catch(e){}};
+await w(ref,'main',{personas:U.personas,blocked:U.blocked,nsfw:U.s.nsfw,sys:U.s.sys,name:U.name,img:U.img||'',imgS:U.imgS||''});
+for(const b of U.bots)await w(ref.collection('bots').doc(b.id),'b'+b.id,b);
+for(const c of Object.values(U.chats))await w(ref.collection('chats').doc(c.id),'c'+c.id,c);
+for(const b of U.bots){if(b.ext)continue;const pd=FB.d.collection('public_bots').doc(b.id);if(b.vis=='public'){const o={id:b.id,name:b.name,desc:b.desc,first:b.first,g:b.g||'',tag:b.tag||'',nsfw:!!b.nsfw,img:b.img||'',vis:'public',aid:U.id,an:U.name},j=JSON.stringify(o);if(LAST['p'+b.id]!==j){try{await pd.set({...o,chats:firebase.firestore.FieldValue.increment(0),t:Date.now()},{merge:true});LAST['p'+b.id]=j}catch(e){}}}else if(LAST['p'+b.id]!=='del'){try{await pd.delete();LAST['p'+b.id]='del'}catch(e){}}}},2000)}
+async function pull(){try{const ref=FB.d.collection('users').doc(U.id),[m,b,c]=await Promise.all([ref.get(),ref.collection('bots').get(),ref.collection('chats').get()]);
+if(m.exists){const x=m.data();U.personas=x.personas||[];U.blocked=x.blocked||[];U.s.nsfw=x.nsfw!==false;if(x.sys!=null)U.s.sys=x.sys;if(x.name)U.name=x.name;if(x.img){U.img=x.img;U.imgS=x.imgS||''}}
+b.forEach(d=>{const o=d.data(),i=U.bots.findIndex(x=>x.id==o.id);i<0?U.bots.push(o):U.bots[i]=o});
+c.forEach(d=>{const o=d.data(),l=U.chats[o.id];if(!l||(o.t||0)>=(l.t||0))U.chats[o.id]=o});save()}catch(e){err='Облако: '+e.message}}
+async function onFbUser(u){if(!u){if(DB.cur&&DB.cur.startsWith('fb_')){DB.cur=null;U=null;render()}return}
+const k='fb_'+u.uid;if(!DB.users[k])DB.users[k]={id:u.uid,name:u.displayName||u.email||'User',salt:'',hash:'',bots:[],chats:{},personas:[],blocked:[],s:{nsfw:true,url:DEFAULT_URL,key:DEFAULT_KEY,model:DEFAULT_MODEL,sys:''}};
+DB.cur=k;U=DB.users[k];applyDef();await pull();R={p:'home'};render();beat();loadPub()}
+async function social(p){try{await FB.a.signInWithPopup(p)}catch(e){err=/webview|disallowed|operation-not-supported|popup/i.test(e.code+e.message)?'Вход через Google/Facebook не открывается во встроенном браузере приложения. Открой сайт в Chrome или войди по почте.':e.message;render()}}
+async function fbEmail(up){const e=$('#lu').value.trim(),p=$('#lp').value;try{up?await FB.a.createUserWithEmailAndPassword(e,p):await FB.a.signInWithEmailAndPassword(e,p)}catch(x){err=x.message.replace('Firebase: ','');render()}}
+const GCID='225344073889-mippla67ipg1e1cs6aa7h0o9r3oeq61i.apps.googleusercontent.com';
+function loadGis(){if(window.google&&google.accounts)return;const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=()=>{if(!U)renderG()};document.head.appendChild(s)}
+function renderG(){const el=$('#gbtn');if(!el||!FB||!window.google||!google.accounts)return;if(!renderG.i){google.accounts.id.initialize({client_id:GCID,callback:r=>{FB.a.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(r.credential)).catch(e=>{err=e.message.replace('Firebase: ','');render()})}});renderG.i=1}
+google.accounts.id.renderButton(el,{theme:'outline',size:'large',shape:'pill',text:'signin_with',locale:'ru',width:Math.min(400,innerWidth-48)})}
+async function initFb(){if(!FIREBASE_CONFIG)return;const ld=n=>new Promise(r=>{const t=document.createElement('script');t.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-'+n+'-compat.js';t.onload=r;t.onerror=r;document.head.appendChild(t)});
+await ld('app');await Promise.all([ld('auth'),ld('firestore')]);if(!window.firebase||!firebase.auth)return;firebase.initializeApp(FIREBASE_CONFIG);FB={a:firebase.auth(),d:firebase.firestore()};FB.a.onAuthStateChanged(onFbUser);loadGis();if(!U)render()}
+function authorOf(b){return b.aid?{id:b.aid,name:b.an||'?'}:SEED.some(x=>x.id==b.id)?{id:'chai',name:'Chai'}:{id:U.id,name:U.name}}
+function cnt(b){const p=PUB.find(x=>x.id==b.id);return p&&p.chats!=null?p.chats:Object.values(U.chats).filter(c=>c.bot==b.id).length}
+function heroCard(b){const a=authorOf(b);return`<div class="hero">${pic(b)}<div class="hv"><div class="r"><span>${esc(b.name)}</span><span style="font-size:15px">💬 ${cnt(b)}</span></div><button class="ap" data-a="author" data-v="${esc(a.id)}" data-n="${esc(a.name)}"><span class="a">${pic({name:a.name})}</span><span style="flex:1">${esc(a.name)}</span><span class="dot ${a.id==U.id?'g':''}" data-st="${esc(a.id)}"></span>›</button></div></div>`}
+function fillStatus(){document.querySelectorAll('[data-st]').forEach(async e=>{const id=e.dataset.st;if(id==U.id)return e.classList.add('g');if(!FB||id=='chai'||id=='imp')return;try{const d=await FB.d.collection('profiles').doc(id).get(),t=d.exists&&d.data().seen;if(t&&Date.now()-t<150000)e.classList.add('g')}catch(x){}})}
+function adopt(bid){if(SEED.some(x=>x.id==bid)||U.bots.some(x=>x.id==bid))return;const b=PUB.find(x=>x.id==bid);if(b){U.bots.push({...b,ext:1,vis:'private'});save()}}
+function bump(bid){const p=PUB.find(x=>x.id==bid);if(FB&&p&&FB.a.currentUser){p.chats=(p.chats||0)+1;FB.d.collection('public_bots').doc(bid).update({chats:firebase.firestore.FieldValue.increment(1)}).catch(()=>{})}}
+async function loadPub(){if(!FB||!FB.a.currentUser)return;try{const q=await FB.d.collection('public_bots').orderBy('chats','desc').limit(60).get();PUB=q.docs.map(d=>d.data());if(R.p=='home')render()}catch(e){}}
+async function loadAuth(aid){AUTH[aid]={};try{const[p,b]=await Promise.all([FB.d.collection('profiles').doc(aid).get(),FB.d.collection('public_bots').where('aid','==',aid).get()]),bs=b.docs.map(d=>d.data());bs.forEach(x=>{if(!PUB.some(y=>y.id==x.id))PUB.push(x)});AUTH[aid]={name:p.exists?p.data().name:'',img:p.exists?p.data().img||'':'',seen:p.exists?p.data().seen:0,bots:bs}}catch(e){AUTH[aid]={bots:[]}}if(R.p=='author'&&R.v==aid)render()}
+function beat(s){if(!FB||!U||!FB.a.currentUser)return;FB.d.collection('profiles').doc(U.id).set({name:U.name,img:U.imgS||'',seen:s===undefined?Date.now():s},{merge:true}).catch(()=>{})}
+setInterval(()=>{if(document.visibilityState=='visible')beat()},60000);document.addEventListener('visibilitychange',()=>beat(document.visibilityState=='visible'?undefined:0));
+document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(a&&A[a.dataset.a])A[a.dataset.a](a.dataset.v,a)});
+document.addEventListener('keydown',e=>{if(e.target.id=='inp'&&e.key=='Enter'&&!e.shiftKey&&innerWidth>700){e.preventDefault();send()}});
+checkLink();applyDef();render();initFb();
+</script></body></html>
